@@ -5,6 +5,7 @@
       -v ~/fdroid/config.py:/fdroid/config.py \
       -v ~/fdroid/metadata/:/fdroid/metadata/ \
       -v ~/fdroid/unsigned:/fdroid/unsigned \
+      --rm \
       fdroid build -l org.example
 
 ### build the latest version as signed apk
@@ -17,6 +18,7 @@ Will only build if the file does not exist in the repo yet.
       -v ~/fdroid/metadata/:/fdroid/metadata/ \
       -v ~/fdroid/steamgifts-android.jks:/fdroid/steamgifts-android.jks \
       -v ~/fdroid/repo:/fdroid/repo \
+      --rm \
       --entrypoint sh \
       fdroid \
       -c "fdroid build -l org.example && fdroid publish && fdroid update"
