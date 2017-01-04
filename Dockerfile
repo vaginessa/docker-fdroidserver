@@ -1,15 +1,16 @@
 # Compiles and installs an fdroid environment
 
-FROM ubuntu:15.10
+FROM ubuntu:16.10
 MAINTAINER mabako
 
 # Enable i386 arch (for android SDK)
 RUN dpkg --add-architecture i386
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && apt-get -y install software-properties-common \
-  && apt-get install -q -y android-libhost android-libhost-dev \
-  && apt-get install -q -y python2.7 python-imaging python-libcloud python-magic python-paramiko python-pyasn1 python-pyasn1-modules python-requests python-yaml \
-                           aapt openjdk-7-jdk openjdk-7-jre-headless zipalign git gradle maven wget lib32stdc++6 lib32z1 \
+  && add-apt-repository ppa:cwchien/gradle \
+  && apt-get update \
+  && apt-get install -q -y python3 python3-dev python3-pil python3-libcloud python3-paramiko python3-pip python3-pyasn1 python3-pyasn1-modules python3-requests python3-venv python3-yaml \
+                           aapt openjdk-8-jdk openjdk-8-jre-headless zipalign git gradle-2.14.1 maven wget lib32stdc++6 lib32z1 \
   && rm -rf /var/lib/apt/lists/*
 
 # Install the android SDK
@@ -27,19 +28,10 @@ ENV PATH "$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools"
 RUN echo y | android update sdk --no-ui --filter platform-tools
 
 # build tools for all desired android versions
-RUN echo y | android update sdk --no-ui --filter build-tools-23.0.2,android-23
+RUN echo y | android update sdk --no-ui --filter build-tools-25.0.2,android-25
 
 # support libraries to build
-RUN echo y | android update sdk --no-ui --filter extra-android-support,extra-android-m2repository
-
-# android native development kit
-RUN wget https://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin \
-  && chmod a+x android-ndk-r10e-linux-x86_64.bin \
-  && ./android-ndk-r10e-linux-x86_64.bin \
-  && rm ./android-ndk-r10e-linux-x86_64.bin
-
-ENV ANDROID_NDK /android-ndk-r10e
-ENV PATH "$PATH:$ANDROID_NDK"
+RUN echo y | android update sdk --no-ui --filter extra-android-m2repository
 
 #--------
 # Install fdroidserver, and remove all git metadata/files
